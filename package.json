@@ -37,6 +37,11 @@
                     "type": "string",
                     "description": "API key for selected provider",
                     "scope": "application"
+                },
+                "aiAssistant.model": {
+                    "type": "string",
+                    "description": "Model to use (provider specific)",
+                    "default": ""
                 }
             }
         }

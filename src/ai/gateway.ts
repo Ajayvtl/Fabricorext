@@ -73,7 +73,35 @@ export class AIGateway {
 
         return JSON.parse(response);
     }
+    public async generateCode(prompt: string, model?: string): Promise<string> {
+        if (!this.provider) {
+            throw new Error('AI provider not configured. Please check your settings.');
+        }
 
+        try {
+            const config = vscode.workspace.getConfiguration('aiAssistant');
+            const finalModel = model || config.get('model') || this.getDefaultModel();
+
+            if (!prompt?.trim()) {
+                throw new Error('Prompt cannot be empty');
+            }
+
+            const response = await this.provider.chatComplete({
+                model: finalModel,
+                messages: [{ role: 'user', content: prompt }],
+                temperature: 0.7
+            });
+
+            if (!response) {
+                throw new Error('Empty response from AI provider');
+            }
+
+            return response;
+        } catch (error) {
+            console.error('AI Gateway Error:', error);
+            throw new Error(`Failed to generate code: ${error instanceof Error ? error.message : String(error)}`);
+        }
+    }
     private getDefaultModel(): string {
         if (!this.provider) {
             throw new Error('AI provider not initialized');
